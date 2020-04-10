@@ -47,8 +47,6 @@ def clear(text=""):
     if text:
         print(text)
 
-
-
 def get_input(min_value, max_value) -> int:
     """ Returns a number, if one got 'inputted'.
     Might throw a KeyboardInterrupt.
@@ -105,9 +103,7 @@ def main(showDescr = True):
         for v in valueset.keys():
             values[v] = 0
 
-    # 2^len(values) comparisons are a good estimate to get solid value differences.
-    # can be aborted prior to that, and repeated.
-    for _ in range(2 ** len(values)):
+    for _ in range(len(values) ** 2):
         #select shown values
         selection = []
         for _ in range(0,3):
