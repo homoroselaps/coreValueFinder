@@ -20,7 +20,7 @@ def loadValues():
         return {}
 
 def getSessionFilePath():
-    sessions = glob.glob('.*.json')
+    sessions = glob.glob('.*.session')
     print("Present Sessions:")
     print("[0] New Session")
     for i, path in enumerate(sessions):
@@ -48,7 +48,7 @@ def main():
         sessionPath = None
 
     if not sessionPath:
-        sessionPath = ".Session{}.json".format(time.strftime("%Y-%m-%d-%H:%M"))
+        sessionPath = ".{}.session".format(time.strftime("%Y-%m-%d-%H:%M"))
         print("New Session: {}".format(sessionPath))
         for v in valueset.keys():
             values[v] = 0
