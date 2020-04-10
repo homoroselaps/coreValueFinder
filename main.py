@@ -22,8 +22,8 @@ def loadValues():
         print("Failed loading value set: {}".format(str(e)))
         return {}
 
-def getSessionFilePath():    
-    sessions = glob.glob('*.json')
+def getSessionFilePath():
+    sessions = glob.glob('.*.session')
     print("Present Sessions:")
     print("[0] New Session")
     for i, path in enumerate(sessions):
@@ -102,7 +102,8 @@ def main(showDescr = True):
         sessionPath = None
 
     if not sessionPath:
-        print("New Session")
+        sessionPath = ".{}.session".format(time.strftime("%Y-%m-%d-%H:%M"))
+        print("New Session: {}".format(sessionPath))
         for v in valueset.keys():
             values[v] = 0
 
