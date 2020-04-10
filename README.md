@@ -6,7 +6,7 @@ The session management enables continuation at a later point.
 
 ## HOW TO
 
-`$ python3 main.py`
+`$ python3 main.py` or `$./main.py`
 
 ## COMMANDS
 
