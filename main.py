@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 from random import choice
+import os
+import sys
 import operator
 import json
 import time
@@ -26,17 +28,68 @@ def getSessionFilePath():
     print("[0] New Session")
     for i, path in enumerate(sessions):
         print("[{}] {}".format(i+1, path))
-        
+
     inp = input("Load Session: ")
     if (inp == "" or inp == "0"):
         return None
     return sessions[int(inp)-1]
 
-def main():
+
+def clear(text=""):
+    # for linux and mac
+    if os.name == "posix":
+        _ = os.system("clear")
+
+    # for windows (here, os.name is 'nt')
+    else:
+        _ = os.system("cls")
+
+    if text:
+        print(text)
+
+
+
+def get_input() -> int:
+    """ Returns a number, if one got 'inputted'.
+    Might throw a KeyboardInterrupt.
+
+    Args:
+        None
+
+    Returns:
+        int: number between 0 and 3
+
+    Throws:
+        KeyboardInterrupt, if the user intends to end inputting values
+    """
+    try:
+        inp = input()
+    except EOFError:
+        raise KeyboardInterrupt("exiting")
+
+    lower = inp.lower()
+    if lower == "exit" or lower == "end" or not lower:
+        raise KeyboardInterrupt("exiting")
+
+    try:
+        index = int(inp)
+        assert index > -1
+        assert index < 4
+    except (ValueError, AssertionError):
+        print(
+            "Please enter '1', '2' or '3' to select one of the presented values, or '0' if they are of equal value to you."
+        )
+        return get_input()  # this might lead to a very unlikely
+        # 'recursion limit error' when repeated more than 5k times.
+        # (or whatever is the limit in your current python runtime)
+    return index
+
+
+
+def main(showDescr = True):
     print("welcome to the core value finder")
     values = {}
     valueset = loadValues()
-    showDescr = True
 
     sessionPath = getSessionFilePath()
     try:
@@ -52,9 +105,12 @@ def main():
         print("New Session")
         for v in valueset.keys():
             values[v] = 0
-    
-    while True:
+
+    # 2^len(values) comparisons are a good estimate to get solid value differences.
+    # can be aborted prior to that, and repeated.
+    for _ in range(2 ** len(values)):
         selection = [choice([*values]), choice([*values]), choice([*values])]
+        clear()
         if showDescr:
             for i in range(0, len(selection)):
                 valueName = selection[i]
@@ -62,12 +118,12 @@ def main():
         else:
             print("[1] {0} [2] {1} [3] {2}".format(selection[0], selection[1], selection[2]))
 
-        inp = input()
-        if (inp.lower() == "descr"):
-            showDescr = not showDescr
-            continue
-        if (inp.lower() == "exit" or inp.lower() == "quit"):
-            sessionPath = sessionPath if sessionPath else "Session{}.json".format(time.strftime("%Y%m%d-%H%M%S"))
+        try:
+            index = get_input()
+            if index:  # if index == 0: don't evaluate
+                values[selection[index - 1]] += 1
+        except KeyboardInterrupt:
+
             print("Saving Session: {}".format(sessionPath))
             dump = {
                 "values": values,
@@ -77,17 +133,15 @@ def main():
             with open(sessionPath,'w') as file:
                 file.write(json_data)
             break
-        try:
-            index = int(inp)
-            values[selection[index-1]] += 1
-        except:
-            print("Invalid Selection or command.")
-            print("[1-3] : Select the value")
-            print("exit/quit : Exit with saving the Session")
-            print("descr : toggle description")
 
     sorted_x = sorted(values.items(), key=operator.itemgetter(1), reverse=True)
-    for k,v in sorted_x:
-        print("{0}:{1}".format(k,v))
+    clear("Values sorted by number of times they 'outcompeted' others.")
+    print("A total of {0} comparisons has been done.\n".format(sum(values.values())))
+    print("----- ---------------")
+    for k, v in sorted_x:
+        print("{1:>4}: {0}".format(k, v))
 
-main()
+
+if __name__ == "__main__":
+    main(not (len(sys.argv) > 1 and sys.argv[1] == "--no-descr"))
+

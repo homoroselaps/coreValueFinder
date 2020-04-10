@@ -11,5 +11,7 @@ The session management enables continuation at a later point.
 ## COMMANDS
 
 * `[1-3]` : select the most important core value of the ones shown
-* `exit` OR `quit` : save the session and exit
-* `descr` : toggle core value description (if available in the value set)
+* `[STRG]+D` OR `[STRG]+C` : save the session, show results and exit
+
+## ARGUMENTS
+* `--no-descr` : deactivate core value description (if available in the value set)
