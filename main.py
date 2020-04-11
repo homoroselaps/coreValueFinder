@@ -121,7 +121,7 @@ def main(showDescr = True):
             print("[1] {0} [2] {1} [3] {2}".format(selection[0], selection[1], selection[2]))
 
         try:
-            index = get_input(1, len(selection))
+            index = get_input(0, len(selection))
             if index:  # if index == 0: don't evaluate
                 values[selection[index - 1]] += 1
         except KeyboardInterrupt:
