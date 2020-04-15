@@ -11,6 +11,7 @@ The session management enables continuation at a later point.
 ## COMMANDS
 
 * `[1-3]` : select the most important core value of the ones shown
+* `[0]` : non of the shown core values are important
 * `[STRG]+D` OR `[STRG]+C` : save the session, show results and exit
 
 ## ARGUMENTS
