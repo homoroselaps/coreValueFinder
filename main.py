@@ -86,12 +86,14 @@ def main(showDescr = True):
     print("welcome to the core value finder")
     values = {}
     valueset = loadValues()
+    count = 0
 
     sessionPath = getSessionFilePath()
     try:
         with open(sessionPath) as json_file:
             data = json.load(json_file)
             values = data['values']
+            count = data['count']
     except Exception as e:
         print("Failed loading Session: {}".format(str(e)))
         print("Fallback to new Session")
@@ -102,6 +104,7 @@ def main(showDescr = True):
         print("New Session: {}".format(sessionPath))
         for v in valueset.keys():
             values[v] = 0
+    input("Press Return to start")
 
     for _ in range(len(values) ** 2):
         #select shown values
@@ -113,6 +116,7 @@ def main(showDescr = True):
                     selection += [newValue]
                     break
         clear()
+        print(f"Round: {count}")
         if showDescr:
             for i in range(0, len(selection)):
                 valueName = selection[i]
@@ -124,12 +128,14 @@ def main(showDescr = True):
             index = get_input(1, len(selection))
             if index:  # if index == 0: don't evaluate
                 values[selection[index - 1]] += 1
+                count += 1
         except KeyboardInterrupt:
 
             print("Saving Session: {}".format(sessionPath))
             dump = {
                 "values": values,
-                "timestamp": time.strftime("%Y%m%d-%H%M%S")
+                "timestamp": time.strftime("%Y%m%d-%H%M%S"),
+                "count": count
             }
             json_data = json.dumps(dump, indent=2)
             with open(sessionPath,'w') as file:
@@ -137,8 +143,9 @@ def main(showDescr = True):
             break
 
     sorted_x = sorted(values.items(), key=operator.itemgetter(1), reverse=True)
-    clear("Values sorted by number of times they 'outcompeted' others.")
-    print("A total of {0} comparisons has been done.\n".format(sum(values.values())))
+    clear()
+    print("Values sorted by number of times they 'outcompeted' others.")
+    print(f"A total of {count} comparisons has been done.\n")
     print("----- ---------------")
     for k, v in sorted_x:
         print("{1:>4}: {0}".format(k, v))
